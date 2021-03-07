@@ -1,0 +1,60 @@
+package com.company;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.util.Scanner;
+
+public class Client extends Hotel implements check_in{
+
+    @Override
+    public void check_in() {
+        try {
+            Scanner scan = new Scanner(System.in);
+            PreparedStatement pstat = null;
+            Connection con = Client.get_connection();
+            String query = "INSERT INTO public.login (username, password, name, surname, age, gender) VALUES (?, ?, ?, ?, ?, ?)";
+            System.out.println("Enter your username:");
+            String username;
+            username = scan.next();
+            System.out.println("Enter your password:");
+            String password;
+            password = scan.next();
+            System.out.println("Enter your name:");
+            String name;
+            name = scan.next();
+            System.out.println("Enter your surname:");
+            String surname;
+            surname = scan.next();
+            System.out.println("Enter your age:");
+            int age;
+            age = scan.nextInt();
+            System.out.println("Enter your gender:");
+            String gender;
+            gender = scan.next();
+            pstat = con.prepareStatement(query);
+            pstat.setString(1, username);
+            pstat.setString(2, password);
+            pstat.setString(3, name);
+            pstat.setString(4, surname);
+            pstat.setInt(5, age);
+            pstat.setString(6, gender);
+            pstat.executeUpdate();
+
+            System.out.println(name + ", You have successfully registered!");
+        } catch (Exception e) {
+            System.out.println("Something is going wrong...");
+        }
+    }
+
+    public static Connection get_connection(){
+        Connection con = null;
+        try {
+            Class.forName("org.postgresql.Driver");
+            con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "123456Zz");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return con;
+    }
+}
