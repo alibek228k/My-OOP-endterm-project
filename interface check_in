@@ -1,0 +1,5 @@
+package com.company;
+
+public interface check_in {
+    public void check_in();
+}
