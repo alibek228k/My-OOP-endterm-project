@@ -1,0 +1,1672 @@
+package com.company;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Hotel {
+    Scanner scan = new Scanner(System.in);
+    Statement stat = null;
+    Connection con = null;
+    ResultSet set = null;
+    PreparedStatement pstat = null;
+    String query;
+    public String hotel1(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Burj Al Arab!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int d = 0;
+            d = scan.nextInt();
+
+            switch (d) {
+                case 1:
+                    System.out.println("The Burj Al Arab is a luxury hotel located in the city of Dubai, United Arab Emirates.\n" +
+                            "Managed by the Jumeirah hotel group, it is one of the tallest hotels in the world,\n" +
+                            "although 39% of its total height is made up of non-occupiable space. \n" +
+                            "Burj Al Arab stands on an artificial island 280 m (920 ft) from Jumeirah Beach\n" +
+                            "and is connected to the mainland by a private curving bridge. \n" +
+                            "The shape of the structure is designed to resemble the sail of a ship.\n " +
+                            "It has a helipad near the roof at a height of 210 m (689 ft) above ground.");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from first_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 360) {
+                            try {
+                                query = "UPDATE first_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 301) && (id < 360)) {
+                                    System.out.println("You have chosen a luxury room! From you 10,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 121) && (id <= 300)) {
+                                    System.out.println("You have chosen a superior room! From you 4,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 1,506 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        }else {
+                            System.out.println("You entered the wrong number!");
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE first_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.println("You have successfully checked out of the room.");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 1";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 1";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 1";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 1";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 1,506;\n" +
+                            "A deluxe room for one night costs $ 10,000;\n" +
+                            "Superior room for one night class costs $ 4,000;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel2(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Emirates Palace Hotel!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room\n" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    System.out.println("The Emirates Palace is a luxury seven-star hotel in Abu Dhabi, the United Arab Emirates operated by Mandarin Oriental as of 1 January 2020.\n" +
+                            "The hotel project was started in December 2001. and was initially operated by Kempinski from opening in November 2005 until 1 January 2020.\n" +
+                            "Due to the change in management, the Palace will be renovated over the course of two years, after which it will be fully rebranded as a Mandarin Oriental property.");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from second_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 10) {
+                            try {
+                                query = "UPDATE second_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 8) && (id < 10)) {
+                                    System.out.println("You have chosen a luxury room! From you 25,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 5) && (id <= 7)) {
+                                    System.out.println("You have chosen a superior room! From you 12,500 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 7,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        }else{
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE second_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 2";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 2";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 2";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 2";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 2,000;\n" +
+                            "A deluxe room for one night costs $ 12,500;\n" +
+                            "Superior room for one night class costs $ 7,000;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel3(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to The Ritz-Carlton!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room\n" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    System.out.println("A subtle combination of Central Asian and European traditions makes The Ritz-Carlton, Astana one of the most\n" +
+                            "recognizable symbols of the city. Here, like no other five-star hotel in the Kazakh capital, the art of creating comfort\n" +
+                            "and luxury is brought to perfection. At the height of the graceful complex, Talan Towers can enjoy the contemplation of  \n" +
+                            "panoramic views of the city, the comfort of elegant rooms, experience the revitalizing spa treatments and make incredible\n" +
+                            "gastronomic discoveries.");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from third_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 340) {
+                            try {
+                                query = "UPDATE third_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 238) && (id < 340)) {
+                                    System.out.println("You have chosen a luxury room! From you 4,500 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 102) && (id <= 237)) {
+                                    System.out.println("You have chosen a superior room! From you 1,500 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 800 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        }else{
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE third_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 3";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 3";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 3";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 3";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 800;\n" +
+                            "A deluxe room for one night costs $ 4,500;\n" +
+                            "Superior room for one night class costs $ 1,500;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel4(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Rixos Khadisha Shymkent!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room\n" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    System.out.println("Rixos Khadisha Shymkent offers its guests unrivalled opulence in Shymkent, a vibrant city in Southern Kazakhstan \n" +
+                            "with bustling bazaars and a lively downtown scene. Located directly on the historic Silk Road, the hotel is an excellent destination \n" +
+                            "for business or leisure stay. A city with a colourful history shared with many of its neighbours, including Uzbekistan, Russia and Mongolia.");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from fourth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 30) {
+                            try {
+                                query = "UPDATE fourth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 25) && (id < 30)) {
+                                    System.out.println("You have chosen a luxury room! From you 3,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 17) && (id <= 24)) {
+                                    System.out.println("You have chosen a superior room! From you 1,700 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 750 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        }else{
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE fourth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 4";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 4";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 4";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 4";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 750;\n" +
+                            "A deluxe room for one night costs $ 3,000;\n" +
+                            "Superior room for one night class costs $ 1,700;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel5(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Hilton Astana!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room\n" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    System.out.println("Hiton Astana is an ultra-modern hotel on the territory of the futuristic EXPO 2017 exhibition complex.  \n" +
+                            "Enjoy excellent service and thoughtful amenities such as a spa and wellness center, rooftop bar, fitness center, \n" +
+                            "indoor pool, Executive Lounge and spacious event spaces.  We are located a short drive from the city center, offices \n" +
+                            "of large companies, government and government agencies of Kazakhstan and from Astana International Airport");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from fifth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 80) {
+                            try {
+                                query = "UPDATE fifth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 61) && (id < 80)) {
+                                    System.out.println("You have chosen a luxury room! From you 5,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 26) && (id <= 60)) {
+                                    System.out.println("You have chosen a superior room! From you 3,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 1,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE fifth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 5";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 5";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 5";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 5";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 1,000;\n" +
+                            "A deluxe room for one night costs $ 5,000;\n" +
+                            "Superior room for one night class costs $ 3,000;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel6(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Hotel Åregården!\n" +
+                    "1.Learn more about the hotel\n" +
+                    "2.Book a room\n" +
+                    "3.Check out the room\n" +
+                    "4.Inquire about food at the hotel\n" +
+                    "5.Find out about entertainment at the hotel\n" +
+                    "6.Find out what services the hotel has\n" +
+                    "7.Find out about all rooms\n" +
+                    "8.Find out about room prices\n" +
+                    "9.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    System.out.println("Åregården is a modern and exclusive mountain hotel with ancestry from 1895 and is situated right in the middle \n" +
+                            "of Åre Village. We have 54 rooms, 1 suite, 2 hotel apartments, two restaurants, two bars, a sauna and a gym. From the hotel \n" +
+                            "you have views over Lake Åresjön as well as the mountain tops and the unique location contributes to the proximity of both \n" +
+                            "pistes and restaurants that you will find just a stone’s throw away.");
+                    break;
+                case 2:
+                    try {
+                        query = "Select *  from sixth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 36) {
+                            try {
+                                query = "UPDATE sixth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 28) && (id < 36)) {
+                                    System.out.println("You have chosen a luxury room! From you 2,500 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 10) && (id <= 27)) {
+                                    System.out.println("You have chosen a superior room! From you 1,250 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 125 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE sixth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 4";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 6";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 6";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 6";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 8:
+                    System.out.println("A mid-range room for one night costs $ 125;\n" +
+                            "A deluxe room for one night costs $ 2,500;\n" +
+                            "Superior room for one night class costs $ 1,250;");
+                    break;
+                case 9:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel7(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Ramada by Wyndham Almaty!\n" +
+                    "1.Book a room\n" +
+                    "2.Check out the room\n" +
+                    "3.Inquire about food at the hotel\n" +
+                    "4.Find out about entertainment at the hotel\n" +
+                    "5.Find out what services the hotel has\n" +
+                    "6.Find out about all rooms\n" +
+                    "7.Find out about room prices\n" +
+                    "8.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    try {
+                        query = "Select *  from seventh_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 80) {
+                            try {
+                                query = "UPDATE seventh_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 56) && (id < 80)) {
+                                    System.out.println("You have chosen a luxury room! From you 3,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 31) && (id <= 55)) {
+                                    System.out.println("You have chosen a superior room! From you 1,700 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 750 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 2:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE seventh_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 7";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 7";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 7";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 7";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    System.out.println("A mid-range room for one night costs $ 350;\n" +
+                            "A deluxe room for one night costs $ 1,500;\n" +
+                            "Superior room for one night class costs $ 980;");
+                    break;
+                case 8:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel8(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Wyndham Garden Astana!\n" +
+                    "1.Book a room\n" +
+                    "2.Check out the room\n" +
+                    "3.Inquire about food at the hotel\n" +
+                    "4.Find out about entertainment at the hotel\n" +
+                    "5.Find out what services the hotel has\n" +
+                    "6.Find out about all rooms\n" +
+                    "7.Find out about room prices\n" +
+                    "8.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    try {
+                        query = "Select *  from eighth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 30) {
+                            try {
+                                query = "UPDATE eighth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 21) && (id < 30)) {
+                                    System.out.println("You have chosen a luxury room! From you 3,000 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 11) && (id <= 20)) {
+                                    System.out.println("You have chosen a superior room! From you 1,700 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 750 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number!");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 2:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE eighth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 8";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 8";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 8";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 8";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    System.out.println("A mid-range room for one night costs $ 100;\n" +
+                            "A deluxe room for one night costs $ 1,200;\n" +
+                            "Superior room for one night class costs $ 490;");
+                    break;
+                case 8:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel9(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Villa Falken!\n" +
+                    "1.Book a room\n" +
+                    "2.Check out the room\n" +
+                    "3.Inquire about food at the hotel\n" +
+                    "4.Find out about entertainment at the hotel\n" +
+                    "5.Find out what services the hotel has\n" +
+                    "6.Find out about all rooms\n" +
+                    "7.Find out about room prices\n" +
+                    "8.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    try {
+                        query = "Select *  from ninth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 70) {
+                            try {
+                                query = "UPDATE ninth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 51) && (id < 70)) {
+                                    System.out.println("You have chosen a luxury room! From you 650 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 25) && (id <= 50)) {
+                                    System.out.println("You have chosen a superior room! From you 300 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 150 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number!");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 2:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE ninth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 9";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 9";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 9";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 10";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    System.out.println("A mid-range room for one night costs $ 150;\n" +
+                            "A deluxe room for one night costs $ 650;\n" +
+                            "Superior room for one night class costs $ 300;");
+                    break;
+                case 8:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel10(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Elite Apart-Hotel!\n" +
+                    "1.Book a room\n" +
+                    "2.Check out the room\n" +
+                    "3.Inquire about food at the hotel\n" +
+                    "4.Find out about entertainment at the hotel\n" +
+                    "5.Find out what services the hotel has\n" +
+                    "6.Find out about all rooms\n" +
+                    "7.Find out about room prices\n" +
+                    "8.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    try {
+                        query = "Select *  from tenth_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if (id >= 1 && id <= 60) {
+                            try {
+                                query = "UPDATE tenth_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 41) && (id < 60)) {
+                                    System.out.println("You have chosen a luxury room! From you 150 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 35) && (id <= 40)) {
+                                    System.out.println("You have chosen a superior room! From you 100 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 30 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 2:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE tenth_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 10";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 10";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 10";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 10";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    System.out.println("A mid-range room for one night costs $ 30;\n" +
+                            "A deluxe room for one night costs $ 150;\n" +
+                            "Superior room for one night class costs $ 100;");
+                    break;
+                case 8:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+    public String hotel11(){
+        con = Client.get_connection();
+        while (true) {
+            System.out.println("Welcome to Khan Hotel!\n" +
+                    "1.Book a room\n" +
+                    "2.Check out the room\n" +
+                    "3.Inquire about food at the hotel\n" +
+                    "4.Find out about entertainment at the hotel\n" +
+                    "5.Find out what services the hotel has\n" +
+                    "6.Find out about all rooms\n" +
+                    "7.Find out about room prices\n" +
+                    "8.Exit.");
+            int f = 0;
+            f = scan.nextInt();
+            switch (f) {
+                case 1:
+                    try {
+                        query = "Select *  from eleventh_hotel_rooms \n" +
+                                "WHERE availability = true ORDER BY room_id";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        while (set.next())
+                            System.out.println(set.getInt("room_id") + " "
+                                    + set.getString("availability"));
+                        System.out.println("Free rooms are presented above. Write the id of the room you would like to choose.");
+                        int id = 0;
+                        id = scan.nextInt();
+                        if ((id >= 1) && (id <= 10)) {
+                            try {
+                                query = "UPDATE eleventh_hotel_rooms SET availability = false WHERE room_id = ?";
+                                pstat = con.prepareStatement(query);
+                                pstat.setInt(1, id);
+                                pstat.executeUpdate();
+                                if ((id >= 8) && (id < 10)) {
+                                    System.out.println("You have chosen a luxury room! From you 150 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else if ((id >= 4) && (id <= 7)) {
+                                    System.out.println("You have chosen a superior room! From you 100 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                } else {
+                                    System.out.println("You have chosen a middle class room! From you 30 $");
+                                    System.out.println("Have fun!");
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        } else {
+                            System.out.println("You entered the wrong number");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 2:
+                    try {
+                        System.out.println("Write your room id: \n");
+                        int id = 0;
+                        id = scan.nextInt();
+                        query = "UPDATE eleventh_hotel_rooms SET availability = true WHERE room_id = ?";
+                        pstat = con.prepareStatement(query);
+                        pstat.setInt(1, id);
+                        pstat.executeUpdate();
+                        System.out.print("You have successfully checked out of the room.\n");
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                case 3:
+                    try {
+                        query = "SELECT restaurant, bar, dining_room FROM catering WHERE hotel_id = 11";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("restaurant:|||   bar:    ||| dining_room:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "  ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 4:
+                    try {
+                        query = "SELECT swimming_pool, sauna, billiards, bowling FROM entertainment WHERE hotel_id = 11";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("swimming_pool:|||   sauna:  ||| billiards: ||| bowling:");
+                        while (set.next())
+                            System.out.println(set.getString(1) + "     ||| " +
+                                    set.getString(2) + " |||  " +
+                                    set.getString(3) + " ||| " +
+                                    set.getString(4));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 5:
+                    try {
+                        query = "SELECT daily_maid_service, laundry, dry_cleaning FROM services_availability WHERE hotel_id = 11";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("daily maid service:|||   laundry:    ||| dry cleaning:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "     |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 6:
+                    try {
+                        query = "SELECT number_of_floors, total_n_of_rooms, rooms_on_floor FROM building_characteristics WHERE hotel_id = 11";
+                        stat = con.createStatement();
+                        set = stat.executeQuery(query);
+                        System.out.println("number of floors: |||total number of rooms: ||| rooms on floor:");
+                        while (set.next())
+                            System.out.println("     " + set.getString(1) + "   |||  " +
+                                    set.getString(2) + "    |||  " +
+                                    set.getString(3));
+                        break;
+                    } catch (Exception throwables) {
+                        throwables.printStackTrace();
+                        break;
+                    }
+                case 7:
+                    System.out.println("A mid-range room for one night costs $ 20;\n" +
+                            "A deluxe room for one night costs $ 75;\n" +
+                            "Superior room for one night class costs $ 35;");
+                    break;
+                case 8:
+                    System.out.println("Good buy!");
+                    System.exit(0);
+                default:
+                    System.err.println("Command not found!");
+            }
+        }
+    }
+
+}
