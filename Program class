@@ -3,12 +3,13 @@ package com.company;
 import java.sql.*;
 import java.util.Scanner;
 
-public class Program {
+public class Program extends Hotel{
 
     public String Start() {
         Connection con = null;
         Statement stat = null;
         Hotel hotel = new Hotel();
+        Program program = new Program();
         ResultSet set = null;
         PreparedStatement pstat = null;
         String query;
@@ -80,7 +81,7 @@ public class Program {
                                 case 2:
                                     System.out.println(hotel.hotel4());
                                 case 3:
-                                    System.out.println(hotel.hotel5());
+                                    System.out.println(program.hotel5());
                                 default:
                                     System.err.println("Command not found!");
                                     }
@@ -94,9 +95,9 @@ public class Program {
                                     w = scan.nextInt();
                                     switch (w) {
                                         case 1:
-                                            System.out.println(hotel.hotel6());
+                                            System.out.println(program.hotel6());
                                         case 2:
-                                            System.out.println(hotel.hotel7());
+                                            System.out.println(program.hotel7());
                                         case 3:
                                             System.out.println(hotel.hotel8());
                                         default:
@@ -112,11 +113,11 @@ public class Program {
                                     p = scan.nextInt();
                                     switch (p) {
                                         case 1:
-                                            System.out.println(hotel.hotel9());
+                                            System.out.println(program.hotel9());
                                         case 2:
-                                            System.out.println(hotel.hotel10());
+                                            System.out.println(program.hotel10());
                                         case 3:
-                                            System.out.println(hotel.hotel11());
+                                            System.out.println(program.hotel11());
                                         default:
                                             System.err.println("Command not found!");
                                     }
