@@ -1,0 +1,142 @@
+package com.company;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Program {
+
+    public String Start() {
+        Connection con = null;
+        Statement stat = null;
+        Hotel hotel = new Hotel();
+        ResultSet set = null;
+        PreparedStatement pstat = null;
+        String query;
+        con = Client.get_connection();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Welcome to hotel management system!!!");
+        System.out.println("What do toy want to do?.\n" +
+                "1.Sign up\n" +
+                "2.Login as a guest\n" +
+                "3.Exit.");
+        int o = 0;
+        o = scan.nextInt();
+        switch (o) {
+            case 1:
+                Client client = new Client();
+                client.check_in();
+                break;
+            case 2:
+                System.out.println("You have successfully logged in as a guest!");
+                break;
+            case 3:
+                System.out.println("Good buy!");
+                System.exit(0);
+            default:
+                System.err.println("Command not found!");
+                System.exit(0);
+        }
+        System.out.println("What do you want to do next?\n" +
+                "1.Choose the hotel.\n" +
+                "2.Exit\n");
+        int i = 0;
+        i = scan.nextInt();
+        while (true) {
+            switch (i) {
+                case 1:
+                    System.out.println("Choose a hotel class:\n" +
+                            "1. 7-star hotel\n" +
+                            "2. 5-star hotel\n" +
+                            "3. 4-star hotel\n" +
+                            "4. 3-star hotel\n" +
+                            "5. Exit the program.");
+                    int u = 0;
+                    u = scan.nextInt();
+                    switch (u) {
+                        case 1:
+                            System.out.println("You can choose these hotels: \n" +
+                                    "1.Burj Al Arab\n" +
+                                    "2.Emirates Palace Hotel\n");
+                            int t = 0;
+                            t = scan.nextInt();
+                            switch (t) {
+                                case 1:
+                                    System.out.println(hotel.hotel1());
+                                case 2:
+                                    System.out.println(hotel.hotel2());
+                                default:
+                                    System.err.println("Command not found!");
+                            }
+                        case 2:
+                            System.out.println("You can choose these hotels: \n" +
+                                    "1.The Ritz-Carlton\n" +
+                                    "2.Rixos Khadisha Shymkent\n" +
+                                    "3.Hilton Astana");
+                            int d = 0;
+                            d = scan.nextInt();
+                            switch (d) {
+                                case 1:
+                                    System.out.println(hotel.hotel3());
+                                case 2:
+                                    System.out.println(hotel.hotel4());
+                                case 3:
+                                    System.out.println(hotel.hotel5());
+                                default:
+                                    System.err.println("Command not found!");
+                                    }
+                                    break;
+                        case 3:
+                                    System.out.println("You can choose these hotels: \n" +
+                                            "1.Hotel Åregården\n" +
+                                            "2.Ramada by Wyndham Almaty\n" +
+                                            "3.Wyndham Garden Astana\n");
+                                    int w = 0;
+                                    w = scan.nextInt();
+                                    switch (w) {
+                                        case 1:
+                                            System.out.println(hotel.hotel6());
+                                        case 2:
+                                            System.out.println(hotel.hotel7());
+                                        case 3:
+                                            System.out.println(hotel.hotel8());
+                                        default:
+                                            System.err.println("Command not found!");
+                                    }
+                                    break;
+                                case 4:
+                                    System.out.println("\n" +
+                                            "1.Villa Falken\n" +
+                                            "2.Elite Apart-Hotel\n" +
+                                            "3.Khan Hotel\n");
+                                    int p = 0;
+                                    p = scan.nextInt();
+                                    switch (p) {
+                                        case 1:
+                                            System.out.println(hotel.hotel9());
+                                        case 2:
+                                            System.out.println(hotel.hotel10());
+                                        case 3:
+                                            System.out.println(hotel.hotel11());
+                                        default:
+                                            System.err.println("Command not found!");
+                                    }
+                                    break;
+                                case 5:
+                                    System.out.println("Good buy!");
+                                    System.exit(0);
+                                default:
+                                    System.err.println("Command not found!");
+
+                            }
+                        case 2:
+                            System.out.println("Good buy!");
+                            System.exit(0);
+                        default:
+                            System.err.println("Command not found!");
+                            System.exit(0);
+
+                    }
+            }
+        }
+    }
+
